@@ -92,7 +92,7 @@ function init() {
 
 init();
 
-// animate();
+animate();
 
 function animate() {
   context.clearRect(0, 0, myCanvas.width, myCanvas.height);

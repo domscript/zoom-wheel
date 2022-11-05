@@ -24,7 +24,7 @@ export class Sector {
     this.cardsSrc = cardsSrc;
   }
 
-  rotateTo(sector, frameCount = 1) {
+  rotateTo(sector, frameCount = 20) {
     // frameCount always should be Int round Up
     // it makes this func independent from outside
     const deg = (1 / 180) * Math.PI;
