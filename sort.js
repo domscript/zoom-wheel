@@ -68,6 +68,12 @@ const colors = [
   ["#4a7d5c", "#9cedb7", "#cff7dc", "#e2fbea"],
 ];
 
+const coords = {
+  x: 0,
+  y: 0,
+  canvasW: myCanvas.width,
+  canvasH: myCanvas.height,
+};
 const sectors = [];
 
 function init() {
@@ -86,25 +92,70 @@ function init() {
       cardsSrc[i]
     );
     // console.log(sectors[i]);
-    sectors[i].draw(context, colors[i]);
+    sectors[i].draw(context, colors[i], coords);
   }
 }
 
 init();
 
-animate();
+// document.addEventListener("focus", redraw, true);
+// document.addEventListener("blur", redraw, true);
+let timer;
+myCanvas.addEventListener(
+  "click",
+  (e) => {
+    if (timer) clearTimeout(timer);
+
+    const clickCoords = handleClick(e);
+    coords.x = clickCoords.x;
+    coords.y = clickCoords.y;
+    coords.canvasW = clickCoords.canvasW;
+    coords.canvasH = clickCoords.canvasH;
+    timer = setTimeout(() => {
+      [coords.x, coords.y] = [0, 0];
+    }, 5000);
+
+    context.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+    for (let i = 0; i < sectors.length; i++) {
+      sectors[i].draw(context, colors[i], coords);
+    }
+  },
+  false
+);
+// redraw();
+
+function handleClick(e) {
+  // Calculate click coordinates
+  const { height, width, top } = myCanvas.getBoundingClientRect();
+  const x = e.clientX - myCanvas.offsetLeft;
+  const y = e.clientY - top;
+  const canvasW = e.target.clientWidth;
+  const canvasH = e.target.clientHeight;
+  return { x, y, canvasW, canvasH };
+}
+
+function redraw() {
+  context.clearRect(0, 0, myCanvas.width, myCanvas.height);
+  for (let i = 0; i < sectors.length; i++) {
+    sectors[i].draw(context, colors[i], coords);
+    sectors[i].rotateTo(sectors[i]);
+  }
+}
+
+// animate();
 
 function animate() {
   context.clearRect(0, 0, myCanvas.width, myCanvas.height);
   for (let i = 0; i < sectors.length; i++) {
-    sectors[i].draw(context, colors[i]);
+    sectors[i].draw(context, colors[i], coords);
     sectors[i].rotateTo(sectors[i]);
   }
-  const img = new Image();
-  img.src = "ZoomLogo.png";
-  img.onload = () => {
-    context.drawImage(img, 0, 0, myCanvas.width, myCanvas.height);
-  };
+  // const img = new Image();
+  // img.src = "ZoomLogo.png";
+  // img.onload = () => {
+  //   context.drawImage(img, 0, 0, myCanvas.width, myCanvas.height);
+  // };
 
   requestAnimationFrame(animate);
 }

@@ -24,7 +24,7 @@ export class Sector {
     this.cardsSrc = cardsSrc;
   }
 
-  rotateTo(sector, frameCount = 20) {
+  rotateTo(sector, frameCount = 10) {
     // frameCount always should be Int round Up
     // it makes this func independent from outside
     const deg = (1 / 180) * Math.PI;
@@ -35,7 +35,7 @@ export class Sector {
     }
   }
 
-  draw(context, color) {
+  draw(context, color, coords) {
     const angleS = this.angleStart;
     const angleE = this.angle;
     const cosS = Math.cos(angleS);
@@ -83,15 +83,16 @@ export class Sector {
     context.textAlign = "center";
 
     const textArr = this.cardsSrc.group.split("");
+    const angleMid = (angleS + angleE) / 2;
     for (let k = 0; k < textArr.length; k++) {
       const angleL = lerp(angleS, angleE, (k + 1) / (textArr.length + 1));
       const cosL = Math.cos(angleL);
       const sinL = Math.sin(angleL);
 
-      if (angleS % (Math.PI * 2) >= 0 && angleS % (Math.PI * 2) <= Math.PI) {
-        console.log(angleS, angleE, angleL);
-        console.dir(textArr[textArr.length - k - 1].__proto__);
-
+      if (
+        angleMid % (Math.PI * 2) >= 0 &&
+        angleMid % (Math.PI * 2) <= Math.PI
+      ) {
         context.fillText(
           textArr[textArr.length - k - 1],
           this.x + radiusGroup * cosL,
@@ -107,6 +108,10 @@ export class Sector {
         );
       }
     }
+    const [xClick, yClick] = [
+      (coords.x * this.radius * 2) / coords.canvasW,
+      (coords.y * this.radius * 2) / coords.canvasH,
+    ];
     for (let i = 1; i <= this.icons; i++) {
       context.font = "0.75rem Arial";
       context.textBaseline = "middle";
@@ -123,13 +128,39 @@ export class Sector {
       const p1 = new Path2D(this.cardsSrc.lines[i - 1].path);
       const m = new DOMMatrix();
 
+      const [iconXCenter, iconYCenter] = [this.x + iconsX, this.y + iconsY];
+      const [iconX, iconY] = [
+        iconXCenter - sizeX / size / 2,
+        iconYCenter - sizeY / size / 2,
+      ];
+
+      let coof = 1;
+      if (
+        iconX <= xClick &&
+        xClick <= iconXCenter + sizeX / size / 2 &&
+        iconY <= yClick &&
+        yClick <= iconYCenter + sizeY / size / 2
+      ) {
+        coof = coof * 1.1;
+        const pBig = new Path2D();
+        const tBig = m
+          .scale((1 / size) * 2)
+          .translate(
+            ((this.x - sizeX / size) * size) / 2,
+            ((this.y - sizeY / size) * size) / 2
+          );
+
+        pBig.addPath(p1, tBig);
+        context.stroke(pBig);
+        context.fill(pBig);
+      } else {
+        coof = 1;
+      }
+
       const p = new Path2D();
       const t = m
-        .scale(1 / size)
-        .translate(
-          (this.x + iconsX - sizeX / size / 2) * size,
-          (this.y + iconsY - sizeY / size / 2) * size
-        );
+        .scale((1 / size) * coof)
+        .translate((iconX * size) / coof, (iconY * size) / coof);
       const lineN = this.cardsSrc.lines[i - 1].text.length;
       for (let j = 0; j < lineN; j++) {
         context.fillText(
