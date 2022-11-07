@@ -11,6 +11,10 @@
   font-display: block;
 }
 
+body {
+  margin: 0;
+}
+
 #screen2_container.normal .col-md-6 {
   display: flex;
   flex-direction: column;
@@ -1670,19 +1674,19 @@ body.ipad #screen7_container .background-icon {
     width: 28em;
   }
   #screen2_container.normal .circle {
-    width: 340px;
+    width: 100%;
     height: 340px;
+
     margin: 0 auto;
-    padding: 10px;
     display: grid;
-    grid-template-columns: repeat(12, 28px);
-    grid-template-rows: repeat(12, 28px);
+    grid-template-columns: repeat(12, 8.3%);
+    grid-template-rows: repeat(12, 8.3%);
   }
 
   #screen2_container.normal .circle ul {
     display: grid;
-    grid-template-columns: repeat(12, 28px);
-    grid-template-rows: repeat(12, 28px);
+    grid-template-columns: repeat(12, 8.3%);
+    grid-template-rows: repeat(12, 8.3%);
   }
 
   #screen2_container.normal .circle li {
