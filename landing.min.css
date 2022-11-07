@@ -242,6 +242,7 @@ html[lang="jp-JP"] #screen2_container.normal .circle p:nth-of-type(6) {
 @media screen and (max-width: 1100px) {
   #screen2_container.normal {
     height: 100vh;
+    min-height: 600px;
     background-image: none !important;
   }
   #screen2_container .top-title {
@@ -344,6 +345,7 @@ html[lang="jp-JP"] #screen2_container.normal .circle p:nth-of-type(6) {
   }
   #screen2_container.normal {
     height: 100vh;
+    min-height: 600px;
   }
   #screen2_container.normal .solutions .col-md-6.section .hover {
     height: 462px;
@@ -1422,6 +1424,7 @@ body.ipad #screen7_container .background-icon {
   }
   #screen2_container.normal {
     height: 100vh;
+    min-height: 600px;
     overflow: hidden;
   }
   #screen2_container.normal .solutions {
@@ -1815,6 +1818,7 @@ body.ipad #screen7_container .background-icon {
 @media (max-width: 449px) {
   #screen2_container.normal {
     height: 100vh;
+    min-height: 600px;
   }
   #screen2_container.normal .solutions .col-md-6.section .hover {
     height: 429px;
