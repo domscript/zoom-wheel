@@ -15,6 +15,7 @@ import {
   ConferenceRooms,
   WorkSpace,
   ContactCenter,
+  zoomText,
 } from "./pathsSVG.js";
 
 myCanvas.height = Math.min(myCanvas.width * 0.6, window.outerHeight * 0.9);
@@ -35,9 +36,9 @@ const cardsSrc = [
   { group: "Zoom Contact Center", lines: [ContactCenter, Solvvy] },
   { group: "Zoom Spaces", lines: [WorkSpace, ConferenceRooms, DigitalSignage] },
 ];
-const angleStart = 200;
-const [inner, outer] = [40, 15];
-
+const angleStart = 200; // deg
+const [inner, outer] = [40, 15]; // %
+const rectWidth = (1 - (1 - (inner + outer) / 100) * Math.cos(Math.PI / 4)) / 2;
 function defineAngles(cardsSrc, angleStart) {
   const cards = cardsSrc.map((el) => el.lines.length);
   const sum = cards.reduce((acc, el) => {
@@ -113,7 +114,7 @@ myCanvas.addEventListener(
     coords.canvasH = clickCoords.canvasH;
     timer = setTimeout(() => {
       [coords.x, coords.y] = [0, 0];
-    }, 5000);
+    }, 100);
 
     context.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
@@ -143,19 +144,26 @@ function redraw() {
   }
 }
 
-// animate();
+animate();
 
 function animate() {
-  context.clearRect(0, 0, myCanvas.width, myCanvas.height);
+  context.clearRect(0, 0, myCanvas.width * rectWidth, myCanvas.height);
+  context.clearRect(
+    myCanvas.width * (1 - rectWidth),
+    0,
+    myCanvas.width,
+    myCanvas.height
+  );
+  context.clearRect(0, 0, myCanvas.width, myCanvas.height * rectWidth);
+  context.clearRect(
+    0,
+    myCanvas.height * (1 - rectWidth),
+    myCanvas.width,
+    myCanvas.height
+  );
   for (let i = 0; i < sectors.length; i++) {
     sectors[i].draw(context, colors[i], coords);
     sectors[i].rotateTo(sectors[i]);
   }
-  // const img = new Image();
-  // img.src = "ZoomLogo.png";
-  // img.onload = () => {
-  //   context.drawImage(img, 0, 0, myCanvas.width, myCanvas.height);
-  // };
-
   requestAnimationFrame(animate);
 }
