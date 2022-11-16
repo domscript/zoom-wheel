@@ -18,10 +18,17 @@ import {
   zoomText,
 } from "./pathsSVG.js";
 
-myCanvas.height = Math.min(myCanvas.width * 0.6, window.outerHeight * 0.9);
-myCanvas.width = myCanvas.height;
+const size = Math.min(myCanvas.width * 0.6, window.outerHeight * 0.9);
 const context = myCanvas.getContext("2d");
 const margin = 10;
+myCanvas.style.width = `${size}px`;
+myCanvas.style.height = `${size}px`;
+const scale = window.devicePixelRatio;
+myCanvas.width = Math.floor(size * scale);
+myCanvas.height = Math.floor(size * scale);
+
+// Normalize coordinate system to use CSS pixels.
+context.scale(scale, scale);
 
 const cardsSrc = [
   {
@@ -93,7 +100,8 @@ function init() {
       cardsSrc[i]
     );
     // console.log(sectors[i]);
-    sectors[i].draw(context, colors[i], coords);
+    sectors[i].draw(context, colors[i], coords, zoomText);
+    context.clearRect(0, 0, myCanvas.width, myCanvas.height);
   }
 }
 
@@ -119,7 +127,7 @@ myCanvas.addEventListener(
     context.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
     for (let i = 0; i < sectors.length; i++) {
-      sectors[i].draw(context, colors[i], coords);
+      sectors[i].draw(context, colors[i], coords, scale);
     }
   },
   false
@@ -139,7 +147,7 @@ function handleClick(e) {
 function redraw() {
   context.clearRect(0, 0, myCanvas.width, myCanvas.height);
   for (let i = 0; i < sectors.length; i++) {
-    sectors[i].draw(context, colors[i], coords);
+    sectors[i].draw(context, colors[i], coords, zoomText);
     sectors[i].rotateTo(sectors[i]);
   }
 }
@@ -162,8 +170,9 @@ function animate() {
     myCanvas.height
   );
   for (let i = 0; i < sectors.length; i++) {
-    sectors[i].draw(context, colors[i], coords);
+    sectors[i].draw(context, colors[i], coords, scale);
     sectors[i].rotateTo(sectors[i]);
+    // sectors[i].drawZoom(context, zoomText);
   }
   requestAnimationFrame(animate);
 }

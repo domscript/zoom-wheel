@@ -35,7 +35,7 @@ export class Sector {
     }
   }
 
-  draw(context, color, coords) {
+  draw(context, color, coords, scale) {
     const angleS = this.angleStart;
     const angleE = this.angle;
     const cosS = Math.cos(angleS);
@@ -78,7 +78,7 @@ export class Sector {
     context.stroke();
 
     context.fillStyle = color[0];
-    context.font = "1rem Arial monospace";
+    context.font = `${1 * scale}rem Arial monospace`;
     context.textBaseline = "middle";
     context.textAlign = "center";
 
@@ -113,7 +113,7 @@ export class Sector {
       (coords.y * this.radius * 2) / coords.canvasH,
     ];
     for (let i = 1; i <= this.icons; i++) {
-      context.font = "0.75rem Arial";
+      context.font = `${1 * scale}rem Arial monospace`;
       context.textBaseline = "middle";
       context.textAlign = "center";
       const angDDD = lerp(angleS, angleE, i / (this.icons + 1));
@@ -144,19 +144,30 @@ export class Sector {
         coof = coof * 1.1;
         const pBig = new Path2D();
         const tBig = m
-          .scale((1 / size) * 2)
+          .scale(1 / size)
           .translate(
-            ((this.x - sizeX / size) * size) / 2,
-            ((this.y - sizeY / size) * size) / 2
+            (this.x - sizeX / size / 2) * size,
+            (this.y - sizeY / size) * size
           );
-
         pBig.addPath(p1, tBig);
         context.stroke(pBig);
         context.fill(pBig);
+        const lineN = this.cardsSrc.lines[i - 1].text.length;
+        for (let j = 0; j < lineN; j++) {
+          context.font = `${2 * scale}rem Arial monospace`;
+          context.fillText(
+            this.cardsSrc.lines[i - 1].text[j],
+            this.x,
+            this.y +
+              (sizeY / size) *
+                ((j * (lineN === 1 ? 1 : 1) + 1) * (lineN === 1 ? 0.8 : 0.6))
+          );
+        }
       } else {
         coof = 1;
+        // this.drawZoom(context, zoomText);
       }
-
+      context.font = `${1 * scale}rem Arial monospace`;
       const p = new Path2D();
       const t = m
         .scale((1 / size) * coof)
@@ -179,4 +190,30 @@ export class Sector {
       context.fill(p);
     }
   }
+
+  // drawZoom(context, zoomText) {
+  //   const rectWidth =
+  //     (1 - (1 - (this.inner + this.outer) / 100) * Math.cos(Math.PI / 4)) / 2;
+  //   const [iconXCenter, iconYCenter] = [this.x, this.y];
+  //   const sizeXY = zoomText.viewBox.split(" ");
+  //   const [sizeX, sizeY] = [sizeXY[2] - sizeXY[0], sizeXY[3] - sizeXY[1]];
+  //   const size =
+  //     Math.max(sizeX, sizeY) / (this.radius * 2 * (1 - 2 * rectWidth));
+  //   const [iconX, iconY] = [
+  //     iconXCenter - sizeX / size / 2,
+  //     iconYCenter - sizeY / size / 2,
+  //   ];
+  //   context.beginPath();
+  //   context.fillStyle = zoomText.fill;
+  //   context.moveTo(iconXCenter, iconYCenter);
+  //   const pZoom = new Path2D(zoomText.path);
+  //   const m = new DOMMatrix();
+
+  //   const p = new Path2D();
+  //   const tZoom = m.scale(1 / size).translate(iconX, iconYCenter);
+  //   // console.log(iconX, iconY, ((iconX - sizeX / size) * size) / 2);
+  //   p.addPath(pZoom, tZoom);
+  //   context.stroke(p);
+  //   context.fill(p);
+  // }
 }
